@@ -1,0 +1,5 @@
+bin/
+.classpath
+.project
+.settings/
+mysql-connector-java-5.1.37/
