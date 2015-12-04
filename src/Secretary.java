@@ -10,7 +10,8 @@ public class Secretary extends JFrame{
 	{
 		setTitle("Application Name");
         setSize(1280, 720);
-         
+        setLocationRelativeTo(null);
+        
         // Menu bar
         Menubar menuBar = new Menubar();   
         setJMenuBar(menuBar);
@@ -47,6 +48,8 @@ public class Secretary extends JFrame{
 	public JPanel getCalendar(){
 		return calendar;
 	}
+	
+
 		
 
 }

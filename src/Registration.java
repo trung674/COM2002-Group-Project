@@ -1,5 +1,3 @@
-
-
 import java.awt.EventQueue;
 
 
@@ -43,7 +41,6 @@ public class Registration {
 			public void run() {
 				try {
 					Registration window = new Registration();
-					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -67,8 +64,9 @@ public class Registration {
 		frame = new JFrame();
 		frame.getContentPane().setFont(new Font("Arial", Font.PLAIN, 11));
 		frame.setBounds(100, 100, 400, 500);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setLocationRelativeTo(null);
 		
 		// Add a button which calls the register method when clicked on
 		btnRegister = new JButton("Register");
@@ -210,6 +208,8 @@ public class Registration {
 		lblSlash2.setFont(new Font("Arial", Font.PLAIN, 11));
 		lblSlash2.setBounds(190,145,10,20);
 		frame.getContentPane().add(lblSlash2);
+		
+		frame.setVisible(true);
 		
 	}
 	
