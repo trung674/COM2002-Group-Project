@@ -5,7 +5,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.SystemColor;
 import java.awt.event.ActionListener;
-import java.util.Date;
+import java.sql.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import java.text.SimpleDateFormat;
 
 /**
  * A Registration form which validates the inputs for creating patients
@@ -28,13 +30,16 @@ public class Registration {
 	private JLabel lblForename, lblSurname,lblDateOfBirth,lblHouseNumber,lblStreetName,lblTowncity,lblPostcode,lblTitle,lblDistrict,lblPhone,lblSlash1,lblSlash2;
 	private String[] titles = {"Mr", "Mrs", "Miss", "Ms","Dr"};
 	private JComboBox cmbTitle;
+	static Calendar now = Calendar.getInstance();
+	static ConnectDB db = new ConnectDB();
+	static Connection con = db.getCon();
 
 	
 	/**
 	 * Launches the frame if it is run on its own via command line or IDE
 	 * @param args 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -71,7 +76,12 @@ public class Registration {
 		btnRegister = new JButton("Register");
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				register();
+				try {
+					register();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnRegister.setBackground(SystemColor.inactiveCaption);
@@ -95,14 +105,14 @@ public class Registration {
 		txtSurname.setColumns(10);
 		
 		txtDay = new JTextField();
-		txtDay.setBounds(120, 145, 25, 20);
+		txtDay.setBounds(120, 145, 30, 20);
 		
 		frame.getContentPane().add(txtDay);
 		txtDay.setColumns(10);
 		
 		txtMonth = new JTextField();
 		txtMonth.setColumns(10);
-		txtMonth.setBounds(160, 145, 25, 20);
+		txtMonth.setBounds(160, 145, 30, 20);
 		
 		frame.getContentPane().add(txtMonth);
 		
@@ -381,7 +391,7 @@ public class Registration {
 			return false;
 		}
 		// Get todays date
-		Date today = (Date) Calendar.getInstance().getTime();
+		java.util.Date today = StringToDate(now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DATE));
 		
 		// If DOB given occurs after today then it is not valid
 		if (bDate.after(today)){
@@ -399,7 +409,9 @@ public class Registration {
 	 */
 	public static Date StringToDate(String date) {
 		try {
-			return new SimpleDateFormat("yyyy-mm-dd").parse(date);
+			java.util.Date uDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+			java.sql.Date sDate = new Date(uDate.getTime());
+			return sDate;
 		} 
 		catch (ParseException e) {
 			// If the string cannot be converted into a date
@@ -466,13 +478,13 @@ public class Registration {
 	}
 	
 	
-	
 	/**
 	 * A method that will register a patient using the inputs on the form
 	 */
-	private void register(){
+	private void register() throws SQLException{
 		
 		// Get the inputs from the form
+		String title = (String) cmbTitle.getSelectedItem();
 		String fname = txtForename.getText();
 		String sname = txtSurname.getText();
 		String day = txtDay.getText();
@@ -488,9 +500,9 @@ public class Registration {
 		
 		// If all inputs are valid then create a Date object to represent Date of birth and convert the house number input to integer
 		if(validateInputs(fname,sname,day,month,year,pNumber,hNumber,strName,district,city,postcode)){
-			Date dob = StringToDate(year + "-" + month + "-" + day);
+			java.sql.Date dob =  StringToDate(year + "-" + month + "-" + day);
 			int houseNumber = Integer.parseInt(hNumber);
-			createPatient(fname,sname,dob,pNumber,houseNumber,strName,district,city,postcode);
+			createPatient(title,fname,sname,dob,pNumber,houseNumber,strName,district,city,postcode);
 		}
 	}
 		
@@ -507,9 +519,54 @@ public class Registration {
 	 * @param city - The town or city name of the patient's Address
 	 * @param postcode - The postcode of the patients Address
 	 */
-	private void createPatient(String fname, String sname, Date dob,String pNumber, int hNumber,String strName, String district, String city, String postcode){
-		System.out.println("Adding " + fname + " " + sname + " " + dob
-				+ "Contact number: " + pNumber + " " + "living at " + hNumber + " " + strName + ", " + district + ", " + city + ", " + postcode);
+	/**
+	 * A method that will confirm and save an appointment to database using the inputs on the form
+	 * @throws SQLException 
+	 */
+	
+	
+	
+	
+	private void createPatient(String title,String fname, String sname, Date dob,String pNumber, int hNumber,String strName, String district, String city, String postcode){
+		String query = null;
+		
+        query = "INSERT INTO PATIENTS VALUES (?, ?, ?, ?, ?, ?, ?, ?);" ;
+
+		
+		System.out.println(query);
+		PreparedStatement stmt = null;
+		int m=5;
+		
+		try{
+			stmt = con.prepareStatement(query);
+			System.out.println("a");
+			stmt.setString(1,title);
+			System.out.println("b");
+			stmt.setString(2, fname);
+			System.out.println("c");
+			stmt.setString(3, sname);
+			System.out.println("d");
+		    stmt.setDate(4, dob);
+		    System.out.println("e");
+			stmt.setString(5, pNumber);
+			System.out.println("f");
+			stmt.setInt(6,3);
+			System.out.println("g");
+			stmt.executeUpdate(query);
+			System.out.println("h");
+			
+			
+		}
+		
+		catch (SQLException e) {
+			//ignored
+		} finally {
+			if (stmt != null)
+				try {
+					stmt.close();
+					
+				} catch (SQLException e) { }
+		}
 		
 	}
 }

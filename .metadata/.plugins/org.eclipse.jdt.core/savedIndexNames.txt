@@ -1,0 +1,16 @@
+INDEX VERSION 1.127+/Users/omorhefere/Documents/Java/.metadata/.plugins/org.eclipse.jdt.core
+3569674952.index
+2139576723.index
+369741659.index
+4010447654.index
+3909959958.index
+1271342938.index
+4253713330.index
+1308420387.index
+1744670643.index
+2209870153.index
+2775959377.index
+3689772550.index
+4082587601.index
+2978579992.index
+3788427059.index

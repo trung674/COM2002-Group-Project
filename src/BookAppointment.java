@@ -48,7 +48,7 @@ public class BookAppointment extends JFrame {
 	       });
 		
 		// Checkbox for no-patient appointment
-		noPatient = new JCheckBox("No Patient ?");
+		noPatient = new JCheckBox("Vacation");
 		noPatient.setBounds(140, 30, 200, 20);
 		noPatient.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -95,25 +95,25 @@ public class BookAppointment extends JFrame {
 		lblStartTime = new JLabel("Start Time");
 		lblStartTime.setBounds(20, 250, 100, 20);
 		txtStartHour = new JTextField(2);
-		txtStartHour.setBounds(130, 250, 20, 20);
+		txtStartHour.setBounds(130, 250, 30, 30);
 		txtStartMin = new JTextField(2);
-		txtStartMin.setBounds(155, 250, 20, 20 );
+		txtStartMin.setBounds(155, 250, 30, 30 );
 		lblEndTime = new JLabel("End Time");
 		lblEndTime.setBounds(20, 280, 100, 20);
 		txtEndHour = new JTextField(2);
-		txtEndHour.setBounds(130, 280, 20, 20);
+		txtEndHour.setBounds(130, 280, 30, 30);
 		txtEndMin = new JTextField(2);
-		txtEndMin.setBounds(155, 280, 20, 20);
+		txtEndMin.setBounds(155, 280, 30, 30);
 			
 		// Date of the appointment
 		lblDate = new JLabel("Date");
 		lblDate.setBounds(20, 320, 100, 20);
 		jpDay = new JSpinner(new SpinnerNumberModel(now.get(Calendar.DATE), 1, now.getActualMaximum(Calendar.DAY_OF_MONTH), 1));
-		jpDay.setBounds(130, 320, 40, 20);
+		jpDay.setBounds(130, 320, 50, 20);
 		jpMonth = new JSpinner(new SpinnerNumberModel(now.get(Calendar.MONTH) + 1, 1, 12, 1));
-		jpMonth.setBounds(175, 320, 40, 20);
+		jpMonth.setBounds(175, 320, 50, 20);
 		jpYear = new JSpinner(new SpinnerNumberModel(now.get(Calendar.YEAR), now.get(Calendar.YEAR), now.get(Calendar.YEAR) + 20, 1));
-		jpYear.setBounds(220, 320, 55, 20);
+		jpYear.setBounds(220, 320, 75, 20);
 
 		
 		
@@ -408,7 +408,6 @@ public class BookAppointment extends JFrame {
 		//	
 		
 		query = "INSERT INTO CALENDER VALUES (?, ?, ?, ?, ?, ?);" ;
-			
 
 		
 		System.out.println(query);
