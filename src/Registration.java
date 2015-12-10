@@ -1,6 +1,4 @@
 import java.awt.EventQueue;
-
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -40,7 +38,7 @@ public class Registration {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Registration window = new Registration();
+					new Registration();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -62,12 +60,13 @@ public class Registration {
 		
 		// Set layout and bounds of the frame
 		frame = new JFrame();
+		frame.setTitle("Registration");
 		frame.getContentPane().setFont(new Font("Arial", Font.PLAIN, 11));
 		frame.setBounds(100, 100, 400, 500);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setLocationRelativeTo(null);
-		
+		frame.setResizable(false);
 		// Add a button which calls the register method when clicked on
 		btnRegister = new JButton("Register");
 		btnRegister.addActionListener(new ActionListener() {
