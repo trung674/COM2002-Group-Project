@@ -114,7 +114,6 @@ public class BookAppointment extends JFrame {
 		jpMonth.setBounds(175, 320, 50, 20);
 		jpYear = new JSpinner(new SpinnerNumberModel(now.get(Calendar.YEAR), now.get(Calendar.YEAR), now.get(Calendar.YEAR) + 20, 1));
 		jpYear.setBounds(220, 320, 75, 20);
-	
 		
 		btnConfirm = new JButton("Confirm");
 		btnConfirm.setBounds(150, 400, 100, 40);
