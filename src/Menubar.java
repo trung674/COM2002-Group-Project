@@ -10,7 +10,7 @@ public class Menubar extends JMenuBar {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setSize(200,200);
 		
-        // Define and add two drop down menu to the menubar
+        // Define and add two drop down menu to the menu bar
         newMenu = new JMenu("New");
         
         toolsMenu = new JMenu("Tools");
@@ -23,7 +23,13 @@ public class Menubar extends JMenuBar {
         
         newPatient.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Registration registrationForm = new Registration();				
+				new Registration();				
+			}
+		});
+        
+        newAppointment.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new BookAppointment();				
 			}
 		});
         // Add sub-menu
@@ -35,21 +41,7 @@ public class Menubar extends JMenuBar {
  		// Add menu
 		this.add(newMenu);
 		this.add(toolsMenu);
-		this.add(aboutMenu);
-		
-		
-        // Add a listener to the New menu item. actionPerformed() method will
-        // invoked, if user triggred this menu item
-        //newPatient.addActionListener(new ActionListener() {
-          //public void actionPerformed(ActionEvent e) {
-            	//if 
-        //        Registration registrationForm = new Registration();
-        //        registrationForm.initialize();
-            	
-            	
-            	// Open new window to add new appointment
-            //}
-        //});
+		this.add(aboutMenu); 	
         
 	}
 	
