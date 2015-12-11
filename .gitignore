@@ -3,3 +3,4 @@ bin/
 .project
 .settings/
 mysql-connector-java-5.1.37/
+.metadata/

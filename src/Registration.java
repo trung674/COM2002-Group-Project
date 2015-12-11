@@ -2,10 +2,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+
 import java.awt.SystemColor;
 import java.awt.event.ActionListener;
-import java.util.Date;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import java.text.SimpleDateFormat;
 
 /**
  * A Registration form which validates the inputs for creating patients
@@ -25,9 +29,14 @@ public class Registration {
 	private JFrame frame;
 	private JButton btnRegister;
 	private JTextField txtForename, txtSurname,txtDay, txtMonth, txtYear, txtHNumber,txtStrName,txtCity,txtPostcode,txtDistrict,txtPhone;
-	private JLabel lblForename, lblSurname,lblDateOfBirth,lblHouseNumber,lblStreetName,lblTowncity,lblPostcode,lblTitle,lblDistrict,lblPhone,lblSlash1,lblSlash2;
+	private JLabel lblForename, lblSurname,lblDateOfBirth,lblHouseNumber,lblStreetName,lblTowncity,lblPostcode,lblTitle,lblDistrict,lblPhone,lblSlash1,lblSlash2, lblPlanOption;
 	private String[] titles = {"Mr", "Mrs", "Miss", "Ms","Dr"};
-	private JComboBox cmbTitle;
+	private String[] plan = {"Maintenance Plan", "Oral Health plan", "Dental Repair", "NHS Free Plan"};
+    private JCheckBox planOption;
+	private JComboBox cmbTitle, cmbPlan;
+	static Calendar now = Calendar.getInstance();
+	static ConnectDB db = new ConnectDB();
+	static Connection con = db.getCon();
 
 	
 	/**
@@ -62,7 +71,7 @@ public class Registration {
 		frame = new JFrame();
 		frame.setTitle("Registration");
 		frame.getContentPane().setFont(new Font("Arial", Font.PLAIN, 11));
-		frame.setBounds(100, 100, 400, 500);
+		frame.setBounds(100, 100, 400, 600);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setLocationRelativeTo(null);
@@ -71,11 +80,13 @@ public class Registration {
 		btnRegister = new JButton("Register");
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				register();
+				try {
+					register();
+				} catch (SQLException e1) {} //ignored
 			}
 		});
 		btnRegister.setBackground(SystemColor.inactiveCaption);
-		btnRegister.setBounds(120, 380, 89, 23);
+		btnRegister.setBounds(120, 500, 89, 23);
 		frame.getContentPane().add(btnRegister);
 		
 		// Adds labels and textfields to the content pane on the frame
@@ -95,14 +106,14 @@ public class Registration {
 		txtSurname.setColumns(10);
 		
 		txtDay = new JTextField();
-		txtDay.setBounds(120, 145, 25, 20);
+		txtDay.setBounds(120, 145, 30, 20);
 		
 		frame.getContentPane().add(txtDay);
 		txtDay.setColumns(10);
 		
 		txtMonth = new JTextField();
 		txtMonth.setColumns(10);
-		txtMonth.setBounds(160, 145, 25, 20);
+		txtMonth.setBounds(160, 145, 30, 20);
 		
 		frame.getContentPane().add(txtMonth);
 		
@@ -208,6 +219,33 @@ public class Registration {
 		lblSlash2.setBounds(190,145,10,20);
 		frame.getContentPane().add(lblSlash2);
 		
+		lblPlanOption = new JLabel("Please select plan :");
+		lblPlanOption.setBounds(120, 410, 200, 23);
+		frame.add(lblPlanOption);
+		
+		cmbPlan = new JComboBox<String>(plan);
+		cmbPlan.setBounds(120, 430, 200, 23);
+		frame.add(cmbPlan);	
+		
+		planOption = new JCheckBox("No Plan ?");
+		planOption.setBounds(120, 380, 150, 23);
+		frame.getContentPane().add(planOption);
+		
+		planOption.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AbstractButton abstractButton = (AbstractButton) e.getSource();
+				if(!abstractButton.getModel().isSelected()){
+					frame.add(lblPlanOption);
+					frame.add(cmbPlan);				
+				} else {
+					frame.remove(lblPlanOption);
+					frame.remove(cmbPlan);
+				}
+				
+				frame.validate();
+				frame.repaint();
+			}
+		});
 		frame.setVisible(true);
 		
 	}
@@ -375,13 +413,13 @@ public class Registration {
 		}
 		
 		// Try to create a date object from the inputs given
-		Date bDate = StringToDate(year + "-" + month + "-" + day);
+		java.sql.Date bDate = StringToDate(year + "-" + month + "-" + day);
 		if(bDate == null){
 			// if it is an invalid date then return false
 			return false;
 		}
 		// Get todays date
-		Date today = (Date) Calendar.getInstance().getTime();
+		java.sql.Date today = StringToDate(now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DATE));
 		
 		// If DOB given occurs after today then it is not valid
 		if (bDate.after(today)){
@@ -399,7 +437,9 @@ public class Registration {
 	 */
 	public static Date StringToDate(String date) {
 		try {
-			return new SimpleDateFormat("yyyy-mm-dd").parse(date);
+			java.util.Date uDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+			java.sql.Date sDate = new Date(uDate.getTime());
+			return sDate;
 		} 
 		catch (ParseException e) {
 			// If the string cannot be converted into a date
@@ -460,40 +500,57 @@ public class Registration {
 	 * @return boolean - if the number is valid
 	 */
 	public static boolean validateContactNumber(String pNumber){
-		System.out.println(1);
-		return pNumber.matches("(08001111)|((07)([0-9]{9}))|((0845464)([0-9]{1}))|((0)([0-9]{8}))|((0)([0-9]{9}))");
+		return pNumber.matches("[0-9]{11}");
 		
 	}
-	
 	
 	
 	/**
 	 * A method that will register a patient using the inputs on the form
 	 */
-	private void register(){
+	private void register() throws SQLException{
 		
 		// Get the inputs from the form
+		String title = (String) cmbTitle.getSelectedItem();;
 		String fname = txtForename.getText();
 		String sname = txtSurname.getText();
 		String day = txtDay.getText();
 		String month = txtMonth.getText();
 		String year = txtYear.getText();
 		String pNumber = txtPhone.getText();//.replace("\\s", "");
-		System.out.println(pNumber);
 		String hNumber = txtHNumber.getText();
 		String strName = txtStrName.getText();
 		String district = txtDistrict.getText();
 		String city = txtCity.getText();
 		String postcode = txtPostcode.getText();
-		
+		String plan = null;
+		if (!planOption.isSelected()){
+			plan = (String) cmbPlan.getSelectedItem();
+		}
 		// If all inputs are valid then create a Date object to represent Date of birth and convert the house number input to integer
 		if(validateInputs(fname,sname,day,month,year,pNumber,hNumber,strName,district,city,postcode)){
-			Date dob = StringToDate(year + "-" + month + "-" + day);
+			java.sql.Date dob =  StringToDate(year + "-" + month + "-" + day);
 			int houseNumber = Integer.parseInt(hNumber);
-			createPatient(fname,sname,dob,pNumber,houseNumber,strName,district,city,postcode);
+			createPatient(title,fname,sname,dob,pNumber,houseNumber,strName,district,city,postcode, plan);
 		}
 	}
+	
+	/**
+	 * A method that check whether an address is already in the database or not
+	 */
+	private ResultSet checkAddress(int hNumber, String postcode){
+		String query = "SELECT address_id FROM ADDRESS WHERE house_number=" + hNumber +" AND post_code = '" + postcode + "'";
 		
+		Statement stmt = null;
+		try	{
+			stmt = con.createStatement();
+			return stmt.executeQuery(query);		
+		} catch (Exception e) {
+			//ignored()
+		} 
+		
+		return null;
+	}
 
 	/**
 	 * A method that creates a new patient in the database using the validated inputs from the form
@@ -506,10 +563,72 @@ public class Registration {
 	 * @param district - the district name of the patient's Address
 	 * @param city - The town or city name of the patient's Address
 	 * @param postcode - The postcode of the patients Address
-	 */
-	private void createPatient(String fname, String sname, Date dob,String pNumber, int hNumber,String strName, String district, String city, String postcode){
-		System.out.println("Adding " + fname + " " + sname + " " + dob
-				+ "Contact number: " + pNumber + " " + "living at " + hNumber + " " + strName + ", " + district + ", " + city + ", " + postcode);
+	 */	
+	
+	private void createPatient(String title,String fname, String sname, Date dob,String pNumber, int hNumber,String strName, String district, String city, String postcode, String plan){
+		
+        String patientQuery = "INSERT INTO PATIENTS (title, forename, surname, date_of_birth, phone_nos, address_id, healthcare_name) VALUES (?, ?, ?, ?, ?, ?, ?);" ;
+        String addressQuery = "INSERT INTO ADDRESS (house_number, street_name, district, city, post_code) VALUES (?, ?, ?, ?, ?);";
+		
+		PreparedStatement insertPatient = null;
+		PreparedStatement insertAddress = null;
+		
+		//If input house number and post code are not already in database, return 0, otherwise return address_id of that address
+		ResultSet address_id = checkAddress(hNumber, postcode);
+		
+		try{
+			// prepare data for adding new patient
+			insertPatient = con.prepareStatement(patientQuery);
+			
+			if(!address_id.next()){ // add new address to database checkAddress return 0
+				insertAddress = con.prepareStatement(addressQuery);
+				insertAddress.setInt(1, hNumber);
+				insertAddress.setString(2, strName);
+				insertAddress.setString(3, district);
+				insertAddress.setString(4, city);
+				insertAddress.setString(5, postcode);
+				insertAddress.executeUpdate();
+				Statement get_id = con.createStatement();
+				// Get latest address_id from database
+				ResultSet id = get_id.executeQuery("SELECT address_id FROM ADDRESS ORDER BY address_id DESC LIMIT 1;");
+				id.next();
+				insertPatient.setInt(6, id.getInt(1));
+				if (insertAddress != null)
+					try {
+						insertAddress.close();
+						
+					} catch (SQLException e) { }
+				
+			} else { // use address_id return by checkAddress in patientQuery
+					insertPatient.setInt(6, address_id.getInt(1));
+			}
+
+			insertPatient.setString(1,title);
+			insertPatient.setString(2, fname);
+			insertPatient.setString(3, sname);
+			insertPatient.setDate(4, dob);
+			insertPatient.setString(5, pNumber);
+			insertPatient.setString(7, plan);
+			int success = insertPatient.executeUpdate();
+			if (success > 0){
+				JOptionPane.showMessageDialog(btnRegister.getParent(), "Successfully add new patient", "Success", JOptionPane.PLAIN_MESSAGE);
+				
+			} else {
+				JOptionPane.showMessageDialog(btnRegister.getParent(),
+					    "Error ! Try again",
+					    "Something went wrong !",
+					    JOptionPane.PLAIN_MESSAGE);  
+			}			
+		}			
+		catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			if (insertPatient != null)
+				try {
+					insertPatient.close();
+					
+				} catch (SQLException e) { }
+		}
 		
 	}
 }
