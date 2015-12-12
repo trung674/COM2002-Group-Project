@@ -1,4 +1,3 @@
-package project;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -139,6 +138,9 @@ public class Patient {
 		return this.surname;
 	}
 	
+	public int getPatientID(){
+		return this.id;
+	}
 	
 	
 	

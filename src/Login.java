@@ -3,7 +3,6 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.sql.*;
 import java.awt.*;
-import java.text.ParseException;
 
 
 public class Login extends JFrame{
@@ -127,7 +126,7 @@ public class Login extends JFrame{
 
 	private void signIn(String username,String pass){
 		String select = null;
-		select = "SELECT * FROM USERS WHERE userType='Secretary';" ;
+		select = "SELECT * FROM USERS WHERE userType='" + username + "';" ;
 
 
 		System.out.println(select);
@@ -149,13 +148,21 @@ public class Login extends JFrame{
 
 
 			}
+			
 			System.out.println(security[2]);
 			System.out.print(pass);
-
 			if (security[2].equals(pass)){
-				Secretary me = new Secretary();
-		        me.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		        me.setVisible(true);
+				if(username.equals("Secretary")){
+					Secretary me = new Secretary();
+			        me.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			        me.setVisible(true);
+				} else {
+					Partner pn = new Partner();
+					pn.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					pn.setVisible(true);
+				}
+				
+				this.dispose();
 
 			} else {
 				JOptionPane.showMessageDialog(this,

@@ -1,4 +1,4 @@
-package project;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.event.*;
@@ -116,7 +116,7 @@ public class Description extends JPanel {
         		  		 getCalendar().addAppointments();
         		  		 
         		  		 clearEntries(); 
-        		  		 
+        		  		 	
         		  	  } else if (JOptionPane.NO_OPTION == result) {
           		                System.out.println("No");
         		  	  }else{
@@ -127,7 +127,6 @@ public class Description extends JPanel {
         		 
         	  }
         });
-
         
         this.add(panelPartner);
         this.add(panelForename);
@@ -138,19 +137,10 @@ public class Description extends JPanel {
         this.add(panelEndTime);
 
         this.add(btnCancel);
-       
-        
-        
-        
-        
-        
-        
-        
-        
+   
         // Do something
 	}
-	
-	
+		
 	private void clearEntries(){
 		txtPartner.setText("");
 		txtForename.setText("");
@@ -192,6 +182,10 @@ public class Description extends JPanel {
 	
 	public CalendarPane getCalendar(){
 		return this.cp;
+	}
+	
+	public JButton getBtnCancel(){
+		return btnCancel;
 	}
 	
 	public void setCalendar(CalendarPane c){

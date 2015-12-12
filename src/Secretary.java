@@ -1,11 +1,6 @@
-package project;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-
-import java.awt.event.*;
 import java.sql.SQLException;
 import java.awt.*;
 
@@ -13,6 +8,7 @@ public class Secretary extends JFrame{
 	
 
 	private JPanel mainPanel;
+	private Menubar menuBar;
 	private Description d;
 	private CalendarPane cp;
 
@@ -23,7 +19,7 @@ public class Secretary extends JFrame{
         setLocationRelativeTo(null);
         
         // Menu bar
-        Menubar menuBar = new Menubar();   
+        menuBar = new Menubar();   
         setJMenuBar(menuBar);
         
         // Calendar Pane
@@ -48,8 +44,9 @@ public class Secretary extends JFrame{
         
 
         add(mainPanel);
-        
+     
 	}
+	
 	public static void main(String[] args) throws SQLException {
 		Secretary me = new Secretary();
         me.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,8 +60,18 @@ public class Secretary extends JFrame{
 	public CalendarPane getCalendar(){
 		return cp;
 	}
-
 	
+	public Description getDescription(){
+		return d;
+	}
+	
+	public Menubar getMenubar(){
+		return menuBar;
+	}
+
+	public void setMenubar(Menubar m){
+		menuBar = m;
+	}
 
 	
 

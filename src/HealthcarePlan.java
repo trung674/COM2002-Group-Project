@@ -1,5 +1,3 @@
-package project;
-
 public class HealthcarePlan {
 	private String name;
 	private float cost;

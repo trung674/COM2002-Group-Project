@@ -1,22 +1,11 @@
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.AbstractButton;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-
-import java.awt.SystemColor;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import java.text.SimpleDateFormat;
+import java.awt.event.*;
 
 /**
  * A Registration form which validates the inputs for creating patients
