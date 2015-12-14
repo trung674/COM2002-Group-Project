@@ -1,7 +1,12 @@
+
+
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Address {
 	private String house_no;
@@ -43,6 +48,27 @@ public class Address {
 	      
 		
 	}
+	
+	public String getHouseNumber(){
+		return this.house_no;
+	}
+	
+	public String getStreetName(){
+		return this.streetName;
+	}
+	
+	public String getDistrict(){
+		return this.district;
+	}
+	
+	public String getCity(){
+		return this.city;
+	}
+	
+	public String getPostcode(){
+		return this.postcode;
+	}
+	
 	
 	public void addAddress(){
 		
