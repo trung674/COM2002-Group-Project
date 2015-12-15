@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -273,6 +274,8 @@ public class BookAppointment extends JFrame {
 		
 		}
 		
+		
+		
 		// If month does not contain only digits and not in the format MM then return false
 		if(!(month.matches("[0-9]{2}"))){
 			return false;
@@ -292,13 +295,24 @@ public class BookAppointment extends JFrame {
 		}
 		
 		// Try to create a date object from the inputs given
-		java.util.Date bDate = StringToDate(year + "-" + month + "-" + day);
+		java.sql.Date bDate = StringToDate(year + "-" + month + "-" + day);
+		Calendar cl = Calendar.getInstance();
+		cl.setTime(bDate);
 		if(bDate == null){
 			// if it is an invalid date then return false
 			return false;
+		} 
+		
+		// if selected date is weekend
+		if (cl.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
+			return false;
+		}
+
+		if  (cl.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ) {
+			return false;
 		}
 		
-		java.util.Date today = StringToDate(now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DATE));
+		java.sql.Date today = StringToDate(now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DATE));
 		// If date given occurs before today then it is not valid
 		if (bDate.before(today)){
 			return false;

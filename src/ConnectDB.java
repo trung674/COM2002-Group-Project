@@ -1,8 +1,6 @@
+
 import java.sql.*;
 
-/**
- * Create a connection to database server
- */
 public class ConnectDB {
 	private Connection con;
 	public ConnectDB(){
@@ -21,6 +19,7 @@ public class ConnectDB {
 	public Connection getCon(){
 		return con;
 	}
+	
 
 	public static void main(String[] args) {
 		ConnectDB test = new ConnectDB();

@@ -1,11 +1,11 @@
+
+
 import javax.swing.*;
 
 import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.awt.*;
@@ -135,6 +135,7 @@ public class Partner extends JFrame {
 						if (JOptionPane.YES_OPTION == check) {
 							// create list of queries
 							ArrayList<PreparedStatement> queryList = new ArrayList<PreparedStatement>();
+							ArrayList<PreparedStatement> paymentQueryList = new ArrayList<PreparedStatement>();
 							// Get data from given appointment
 							java.sql.Date date = a.getDate();
 							int patient_id = a.getID();
@@ -143,7 +144,9 @@ public class Partner extends JFrame {
 							
 							for(String treatment_name : selectedTreatment){
 								String query = "INSERT INTO LOGS (date, treatment_name, patient_id, extra_visit, partner_type) VALUES (?, ?, ?, ?, ?);" ;
+								String paymentQuery = "INSERT INTO PAYMENTS(patient_id, treatment_name) VALUES (?,?)";
 								PreparedStatement insertTreatment = null;
+								PreparedStatement insertPayment = null;
 								
 								
 								try {
@@ -154,9 +157,20 @@ public class Partner extends JFrame {
 									insertTreatment.setString(4, visit_type);
 									insertTreatment.setString(5, partner_type);
 									queryList.add(insertTreatment);
+									
+									insertPayment = con.prepareStatement(paymentQuery);
+									insertPayment.setInt(1, patient_id);
+									insertPayment.setString(2, treatment_name);
+									paymentQueryList.add(insertPayment);
+									
 								} catch (SQLException e1) {
 									e1.printStackTrace();
+									
+									
 								}	
+								
+								
+								
 							}
 							
 							// execute each query one at a time
@@ -177,6 +191,24 @@ public class Partner extends JFrame {
 								}
 								
 							}
+							
+							for(PreparedStatement paymentQuery: paymentQueryList ){
+								try {
+									result = paymentQuery.executeUpdate();									
+								} catch (SQLException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								} finally {
+									try {
+										paymentQuery.close();
+									} catch (SQLException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+								}
+							}
+							
+	
 							
 							if (result > 0){
 								JOptionPane.showMessageDialog(jfTreatment, "Successfully add new patient", "Success", JOptionPane.PLAIN_MESSAGE);

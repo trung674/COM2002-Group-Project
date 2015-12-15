@@ -1,4 +1,5 @@
 
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -38,6 +39,17 @@ public class Patient {
 		this.hp = p;
 	}
 	
+	public Patient() {
+		this.id = 0;
+		this.title = null;
+		this.forename = null;
+		this.surname = null;
+		this.dob = null;
+		this.phone_no = null;
+		this.address = null;
+		this.hp = null;
+	}
+
 	public int getAge(){
 		Calendar today = Calendar.getInstance();
 		Calendar dob = Calendar.getInstance();
@@ -60,29 +72,31 @@ public class Patient {
 
 	}
 	
-	public ArrayList<Patient> getAllPatients() throws SQLException{
+	public static ArrayList<Patient> getAllPatients() throws SQLException{
 		
 		ConnectDB connect = new ConnectDB();
 		Connection con = connect.getCon();
 		
+		ArrayList<Patient> allPatients = new ArrayList<Patient>();
 		
 		PreparedStatement stmt = con.prepareStatement("SELECT * FROM PATIENTS");
 		ResultSet patientResultSet = stmt.executeQuery();
 		while(patientResultSet.next()){
 			int id = patientResultSet.getInt(1);
-			String forename = patientResultSet.getString(2);
-			String surname = patientResultSet.getString(3);
-			Date dob = patientResultSet.getDate(4);
-			String phone_no = patientResultSet.getString(5);
-			int address_id = patientResultSet.getInt(6);
+			String title = patientResultSet.getString(2);
+			String forename = patientResultSet.getString(3);
+			String surname = patientResultSet.getString(4);
+			Date dob = patientResultSet.getDate(5);
+			String phone_no = patientResultSet.getString(6);
+			int address_id = patientResultSet.getInt(7);
 			Boolean hasAddress = patientResultSet.wasNull();
-			String healthCareName = patientResultSet.getString(7);
+			String healthCareName = patientResultSet.getString(8);
 			Boolean hasHealthCare =  patientResultSet.wasNull();
 			
-			HealthcarePlan p = null;
+			HealthcarePlan plan = null;
 			Address address = null;
 			
-			if(hasAddress){
+			if(!hasAddress){
 				PreparedStatement addressStmt = con.prepareStatement("SELECT * FROM ADDRESS WHERE `address_id`= ?");
 				addressStmt.setInt(1, address_id);
 				ResultSet addressResultSet = addressStmt.executeQuery();
@@ -95,40 +109,33 @@ public class Patient {
 					address = new Address(houseNum,streetName,district,city,postcode);
 				}
 				
-				
+				addressStmt.close();
 			}
 			
-			if(hasHealthCare){
+			if(!hasHealthCare){
 				PreparedStatement healthCareStmt = con.prepareStatement("SELECT * FROM PLANS WHERE `healthcare_name`= ?");
 				healthCareStmt.setString(1, healthCareName);
 				ResultSet healthCareResultSet = healthCareStmt.executeQuery();
 				while(healthCareResultSet.next()){
-					String houseNum = healthCareResultSet.getString(2);
-					String streetName = healthCareResultSet.getString(3);
-					String district = healthCareResultSet.getString(4);
-					String city = healthCareResultSet.getString(5);
-					String postcode = healthCareResultSet.getString(6);
+					Float monthlyCost = healthCareResultSet.getFloat(2);
+					int noCheckups = healthCareResultSet.getInt(3);
+					int noHygieneVisits = healthCareResultSet.getInt(4);
+					int noRepairs = healthCareResultSet.getInt(5);
+					plan = new HealthcarePlan(healthCareName,monthlyCost,noCheckups,noHygieneVisits,noRepairs);
 				}
+				
+				healthCareStmt.close();
 			}
 			
+			Patient p = new Patient(id,title,forename,surname,dob,phone_no,address,plan);
+			allPatients.add(p);
 		}
-		
+		stmt.close();
 		con.close();
 		
-		return null;
+		return allPatients;
 	}
 	
-	public static void main(String[] args) throws ParseException{
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		java.util.Date d = sdf.parse("09/12/1997");
-		java.sql.Date sqlDate = new java.sql.Date(d.getTime());
-
-		Patient paul = new Patient(1001,"Mr","Bob","Dylan",sqlDate,"07222333222",null,null);
-		
-		System.out.println(sqlDate);
-		System.out.println(paul.getAge());
-	}
 	
 	public String getForename(){
 		return this.forename;
@@ -138,12 +145,69 @@ public class Patient {
 		return this.surname;
 	}
 	
-	public int getPatientID(){
+	public int getID(){
 		return this.id;
 	}
 	
+	public String getPhoneNumber(){
+		return this.phone_no;
+	}
+	
+	public String getTitle(){
+		return this.title;
+	}
+	
+	public Date getDateOfBirth(){
+		return this.dob;
+	}
+	
+	public Address getAdddress(){
+		return this.address;
+	}
+	
+	public HealthcarePlan getHealthcarePlan(){
+		return this.hp;
+	}
+	
+	public static void main(String[] args) throws SQLException{
+		try{
+			ArrayList<Patient> patients = Patient.getAllPatients();
+			System.out.println(patients.get(0));
+			System.out.println(patients.size());
+		}catch(SQLException e){
+			System.out.println("YO");
+		}finally{
+			
+		}
+	}
+	
+	public String toString(){
+		return this.getForename();
+	}
 	
 	
+	public void updateHealthCarePlan(String healthCareName) throws SQLException{
+		
+		ConnectDB connect = new ConnectDB();
+		Connection con = connect.getCon();
+		
+		if(healthCareName == null){
+			PreparedStatement updateHealthCarePlan = 
+					con.prepareStatement("UPDATE PATIENTS SET healthcare_name = NULL WHERE patient_id = ?");
+			updateHealthCarePlan.setInt(1,this.getID());
+			updateHealthCarePlan.executeUpdate();
+			updateHealthCarePlan.close();
+			con.close();
+		}else{
+			PreparedStatement updateHealthCarePlan = 
+				con.prepareStatement("UPDATE PATIENTS SET healthcare_name = ? WHERE patient_id = ?");
+			updateHealthCarePlan.setString(1,healthCareName);
+			updateHealthCarePlan.setInt(2,this.getID());
+			updateHealthCarePlan.executeUpdate();
+			updateHealthCarePlan.close();
+			con.close();
+		}
+	}
 }
 
 

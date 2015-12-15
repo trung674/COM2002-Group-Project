@@ -140,9 +140,8 @@ public class Login extends JFrame{
 	private void logIn(){
 		String user = username.getText();
 		String pass = password.getText();
-
+		System.out.println(user + " " + pass);
 		if (validateInputs(user,pass)){
-
 			signIn(user,pass);
 		}
 	}
@@ -162,42 +161,39 @@ public class Login extends JFrame{
 			stmt = con.prepareStatement(select);
 			ResultSet rs = stmt.executeQuery();
 			int columns = rs.getMetaData().getColumnCount();
-			
 			//Extract username and password from database
-			String[] security = new String[3];
 			if(rs.next()){
-				while(rs.next()){
+				String[] security = new String[3];
 					for (int i=1; i <= columns; i++){
 						security[i] = rs.getString(i) ;
-					}
+				}
+				
+				// if password from user matches the one on database, initiate interface
+				if (security[2].equals(pass)){
+					if(username.equals("Secretary")){
+						Secretary me = new Secretary();
+				        me.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				        me.setVisible(true);
+					} else {
+						Partner pn = new Partner();
+						pn.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+						pn.setVisible(true);
+					} 
+					
+					// dispose login interface
+					this.dispose();
+
+				} else { // Wrong user name
+					JOptionPane.showMessageDialog(this,
+						    "Error ! Try again",
+						    "Wrong password !",
+						    JOptionPane.ERROR_MESSAGE);
 				}
 					
 			} else { //return error if username does not match with any data on database
 				JOptionPane.showMessageDialog(this,
 					    "Error ! Try again",
 					    "Wrong username !",
-					    JOptionPane.ERROR_MESSAGE);
-			}
-			
-			// if password from user matches the one on database, initiate interface
-			if (security[2].equals(pass)){
-				if(username.equals("Secretary")){
-					Secretary me = new Secretary();
-			        me.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			        me.setVisible(true);
-				} else {
-					Partner pn = new Partner();
-					pn.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					pn.setVisible(true);
-				}
-				
-				// dispose login interface
-				this.dispose();
-
-			} else { //
-				JOptionPane.showMessageDialog(this,
-					    "Error ! Try again",
-					    "Wrong password !",
 					    JOptionPane.ERROR_MESSAGE);
 			}
 

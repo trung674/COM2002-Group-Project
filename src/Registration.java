@@ -1,4 +1,7 @@
+
+
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -22,7 +25,7 @@ public class Registration {
 	private String[] titles = {"Mr", "Mrs", "Miss", "Ms","Dr"};
 	private String[] plan = {"Maintenance Plan", "Oral Health plan", "Dental Repair", "NHS Free Plan"};
     private JCheckBox planOption;
-	private JComboBox cmbTitle, cmbPlan;
+	private JComboBox<String> cmbTitle, cmbPlan;
 	
 	// Initiate connection to database
 	static Calendar now = Calendar.getInstance();
