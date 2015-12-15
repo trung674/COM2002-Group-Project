@@ -1,4 +1,4 @@
-
+package project;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -202,7 +202,7 @@ public class Partner extends JFrame {
 	
 							
 							if (result > 0){
-								JOptionPane.showMessageDialog(jfTreatment, "Successfully add new patient", "Success", JOptionPane.PLAIN_MESSAGE);
+								JOptionPane.showMessageDialog(jfTreatment, "Successfully added treatments", "Success", JOptionPane.PLAIN_MESSAGE);
 								
 							} else {
 								JOptionPane.showMessageDialog(jfTreatment,"Error ! Try again","Something went wrong !", JOptionPane.PLAIN_MESSAGE);  

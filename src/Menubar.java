@@ -1,4 +1,5 @@
 
+package project;
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ public class Menubar extends JMenuBar {
         viewPatients.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					   new ViewPatients();
+					   new ViewPatients(null);
 				} catch (SQLException e1) {
 					System.out.println("Here3");
 				}				

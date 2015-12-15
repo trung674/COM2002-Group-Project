@@ -1,4 +1,4 @@
-
+package project;
 
 import javax.swing.*;
 import java.awt.*;
@@ -259,7 +259,7 @@ public class Registration {
 	private  boolean validateInputs(String fname, String sname, String day, String month, String year, String pNumber,String houseNum, String strName,String district, String city, String postcode ){
 		
 		boolean validInputs = true; // Inputs valid until proven otherwise
-		String[] msg = {"@","@","@","@","@","@","@","@","@"}; // Message string for each of the patients parameters, @ denotes that there is no error
+		String[] msg = {"@","@","@","@","@","@","@","@","@","@"}; // Message string for each of the patients parameters, @ denotes that there is no error
 		
 		// Validate each of the inputs, creating an error message when invalid and resetting the text field.
 		if(!validateName(fname)){
@@ -309,6 +309,10 @@ public class Registration {
 			msg[8] = "Input Error: Postcode is invalid";
 			txtPostcode.setText("");
 		}
+		if(validateDate(day,month,year) && !(isUnder18(StringToDate(year + "-" + month + "-" + day))) && cmbPlan.getSelectedItem().equals("NHS Free Plan")){
+			validInputs = false;
+			msg[9] = "Input Error: The person is not under 18 and not entitled to the NHS Free Plan";
+		}
 		
 		// If there are some invalid inputs then display the error message
 		if(!validInputs){
@@ -347,7 +351,7 @@ public class Registration {
 	 * @param name String - Surname or Forename
 	 * @return boolean - If it is valid
 	 */
-	private static boolean validateName(String name){
+	public static boolean validateName(String name){
 		
 		return name.matches("[A-Z]{1}[a-z]{2,34}?"); // Name must be capitalised
 		
@@ -493,6 +497,18 @@ public class Registration {
 	public static boolean validateContactNumber(String pNumber){
 		return pNumber.matches("[0-9]{11}");
 		
+	}
+	
+	public static boolean isUnder18(Date d){
+		
+		Calendar today = Calendar.getInstance();
+		Calendar dob = Calendar.getInstance();
+		dob.setTime(d);
+		
+		int years_diff = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+		
+		
+	    return years_diff < 18;
 	}
 	
 	
