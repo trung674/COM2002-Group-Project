@@ -1,5 +1,4 @@
 
-
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -67,7 +66,7 @@ public class ViewPatients {
 	private JFrame jfHealthPlan;
 	private JComboBox cmbHealthPlan;
 	private JTextField txtCurrent;
-	
+	private JTextArea txtAreaTreatments;
 	
 
 	/**
@@ -77,7 +76,7 @@ public class ViewPatients {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ViewPatients window = new ViewPatients();
+					ViewPatients window = new ViewPatients(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -89,15 +88,15 @@ public class ViewPatients {
 	 * A methods that creats a new ViewPatients Frame
 	 * @throws SQLException 
 	 */
-	public ViewPatients() throws SQLException {
-		initialize();
+	public ViewPatients(ArrayList<Patient> queryPatients) throws SQLException {
+		initialize(queryPatients);
 	}
 
 	/**
 	 * Create a new frame to view the patients
 	 * @throws SQLException 
 	 */
-	private void initialize() throws SQLException {
+	private void initialize(ArrayList<Patient> queryPatients) throws SQLException {
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -321,21 +320,44 @@ public class ViewPatients {
 		pnlTreatmentsAndCosts.add(pnlTreatments);
 		pnlTreatments.setLayout(new BoxLayout(pnlTreatments, BoxLayout.X_AXIS));
 		
-		JTextArea txtAreaTreatments = new JTextArea();
+		txtAreaTreatments = new JTextArea();
 		txtAreaTreatments.setAlignmentY(Component.TOP_ALIGNMENT);
 		txtAreaTreatments.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		txtAreaTreatments.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		txtAreaTreatments.setLineWrap(true);
 		txtAreaTreatments.setWrapStyleWord(true);
+
 		String log1 = "09/12/2015 - Checkup - �20.00";
 		String log2 = "10/12/2015 - Filling - �60.00";
 		String log3 = "11/12/2015 - Braces - �90.00";
 		txtAreaTreatments.append(log1 + NEWLINE);
 		txtAreaTreatments.append(log2 + NEWLINE);
 		txtAreaTreatments.append(log3 + NEWLINE);
+
 		pnlTreatments.add(txtAreaTreatments);
 		
 		JButton btnPay = new JButton("Payments Made");
+		btnPay.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(!(currentPatient == null)){
+					try {
+						makePayments();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						reset();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				}
+			}
+			
+		});
 		btnPay.setBackground(SystemColor.control);
 		btnPay.setForeground(Color.BLACK);
 		btnPay.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -368,7 +390,14 @@ public class ViewPatients {
 					currentPatient = patients.get(currentPatientIndex - 1);
 					currentPatientIndex -= 1;
 				}
+				txtAreaTreatments.setText(null);
 				displayPatient();
+				try {
+					getTreatments();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			
 		});
@@ -386,7 +415,14 @@ public class ViewPatients {
 					currentPatient = patients.get(currentPatientIndex + 1);
 					currentPatientIndex += 1;
 				}
+				txtAreaTreatments.setText(null);
 				displayPatient();
+				try {
+					getTreatments();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		btnNext.setBackground(SystemColor.control);
@@ -394,7 +430,7 @@ public class ViewPatients {
 		
 		JPanel pnlUpdatesAndQuery = new JPanel();
 		pnlUpdatesAndQuery.setBorder(new LineBorder(Color.ORANGE, 2));
-		pnlUpdatesAndQuery.setBounds(454, 566, 420, 53);
+		pnlUpdatesAndQuery.setBounds(377, 597, 497, 53);
 		frame.getContentPane().add(pnlUpdatesAndQuery);
 		pnlUpdatesAndQuery.setLayout(new GridLayout(1, 0, 0, 0));
 		
@@ -418,10 +454,12 @@ public class ViewPatients {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
+					reset();
 					patients = Patient.getAllPatients();
 					currentPatient = patients.get(0);
 					currentPatientIndex = 0;
 					displayPatient();
+					getTreatments();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -433,27 +471,55 @@ public class ViewPatients {
 		pnlUpdatesAndQuery.add(btnAll);
 		
 		JButton btnSearch = new JButton("Search");
+		btnSearch.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					new FindPatients();
+					frame.dispose();
+				} catch (SQLException e1) {
+					frame.dispose();
+				}
+				
+			}
+		});
 		btnSearch.setBackground(SystemColor.control);
 		pnlUpdatesAndQuery.add(btnSearch);
 		
-		this.patients = new ArrayList<Patient>();
-		this.patients = Patient.getAllPatients();
-		if(this.patients.isEmpty()){
-			this.currentPatient = null;
-			System.out.println("Here");
-		}else{
-			System.out.println("Here2");
-			this.currentPatient = this.patients.get(0);
-			this.currentPatientIndex = 0;
-			System.out.println(this.currentPatient.getID());
-			displayPatient();
+		
+		if(queryPatients == null){
+			this.patients = new ArrayList<Patient>();
+			this.patients = Patient.getAllPatients();
+			if(this.patients.isEmpty()){
+				this.currentPatient = null;
+			}else{
+				this.currentPatient = this.patients.get(0);
+				this.currentPatientIndex = 0;
+				System.out.println(this.currentPatient.getID());
+				displayPatient();
+				getTreatments();
+				
+			}
 			
+		}else{
+			this.patients = queryPatients;
+			if(this.patients.isEmpty()){
+				this.currentPatient = null;
+			}else{
+				this.currentPatient = this.patients.get(0);
+				this.currentPatientIndex = 0;
+				System.out.println(this.currentPatient.getID());
+				displayPatient();
+				getTreatments();
+				
+			}
 		}
 		
 	    frame.setVisible(true);
 	}
 	
 	public void reset() throws SQLException{
+		txtAreaTreatments.setText(null);
 		this.patients = new ArrayList<Patient>();
 		this.patients = Patient.getAllPatients();
 		if(this.patients.isEmpty()){
@@ -462,7 +528,7 @@ public class ViewPatients {
 			this.currentPatient = this.patients.get(0);
 			this.currentPatientIndex = 0;
 			displayPatient();
-			
+			getTreatments();
 		}
 	}
 	
@@ -497,7 +563,7 @@ public class ViewPatients {
 		
 		if(!(this.currentPatient.getHealthcarePlan() == null)){
 			txtHealthName.setText(this.currentPatient.getHealthcarePlan().getHealthcareName());
-			String monthlyCost = "�" + String.valueOf(this.currentPatient.getHealthcarePlan().getMonthlyCost());
+			String monthlyCost = "£" + String.valueOf(this.currentPatient.getHealthcarePlan().getMonthlyCost() + "0");
 			txtMonthlyCost.setText(monthlyCost);
 			String checkups = String.valueOf(this.currentPatient.getHealthcarePlan().getNumCheckUps());
 			txtCheckups.setText(checkups);
@@ -527,14 +593,99 @@ public class ViewPatients {
 		Connection con = connect.getCon();
 		
 		ArrayList<Treatment> treatments = new ArrayList<Treatment>();
-		PreparedStatement updateHealthCarePlan = con.prepareStatement("SELECT treatment_name FROM PAYMENTS WHERE patient_id = ?");
-		updateHealthCarePlan.setInt(1, this.currentPatient.getID());
-		ResultSet treatmentsSet = updateHealthCarePlan.executeQuery();
-		while(treatmentsSet.next()){
+		PreparedStatement stmtPayments = con.prepareStatement("SELECT treatment_name FROM PAYMENTS WHERE patient_id = ?");
+		stmtPayments.setInt(1, this.currentPatient.getID());
+		ResultSet paymentsSet = stmtPayments.executeQuery();
+		
+		float total_cost = 0.0f;
+		int noCheckUps;
+		int noRepairs;
+		int noHygiene;
+		
+		if(this.currentPatient.getHealthcarePlan() == null){
+			noCheckUps = 0;
+			noRepairs = 0;
+			noHygiene = 0;
+		}else{
+			noCheckUps = this.currentPatient.getHealthcarePlan().getNumCheckUps();
+			noRepairs = this.currentPatient.getHealthcarePlan().getNumRepairs();
+			noHygiene = this.currentPatient.getHealthcarePlan().getNumHygieneVisits();
+		}
+
+		
+			
+		while(paymentsSet.next()){
+			String treatment_name = paymentsSet.getString(1);
+			String type = Treatment.getType(treatment_name);
+			
+			if(type.equals("Check-up") && noCheckUps > 0){
+				float cost = 0.0f;
+				String displayTreatments = treatment_name + " - �" + String.valueOf(cost) + "0" + NEWLINE;
+				this.txtAreaTreatments.append(displayTreatments);
+				noCheckUps--;
+			}else if(type.equals("Hygiene") && noHygiene > 0 ){
+				float cost = 0.0f;
+				String displayTreatments = treatment_name + " - �" + String.valueOf(cost) + "0" + NEWLINE;
+				this.txtAreaTreatments.append(displayTreatments);
+				noHygiene--;
+			}else if(noRepairs > 0){
+				float cost = 0.0f;
+				String displayTreatments = treatment_name + " - �" + String.valueOf(cost) + "0" + NEWLINE;
+				this.txtAreaTreatments.append(displayTreatments);
+				noRepairs--;
+			}else{
+				PreparedStatement stmtCosts = con.prepareStatement("SELECT cost FROM TREATMENTS WHERE treatment_name = ?");
+				stmtCosts.setString(1,treatment_name);
+				ResultSet costsSet = stmtCosts.executeQuery();
+				while(costsSet.next()){
+					float cost = costsSet.getFloat(1);
+					total_cost += cost;
+					String displayTreatments = treatment_name + " - �" + String.valueOf(cost) + "0" + NEWLINE;
+					this.txtAreaTreatments.append(displayTreatments);
+				}
+				stmtCosts.close();
+			}
+
 			
 		}
+		this.txtTotalcost.setText("�"+String.valueOf(total_cost) +"0");
 		
+		
+		stmtPayments.close();
+		
+		// Determine if a patient needs more treatments
+		PreparedStatement stmtNeedCheckup = con.prepareStatement("SELECT * FROM LOGS WHERE patient_id = ? ORDER BY date DESC");
+		stmtNeedCheckup.setInt(1, this.currentPatient.getID());
+		ResultSet logsSet = stmtNeedCheckup.executeQuery();
+		
+		if(logsSet.next()){
+			String extraVisitType = logsSet.getString(5);
+			if (extraVisitType.equals("Treatment")){
+				txtMoreTreatments.setText("Yes");
+			}else{
+				txtMoreTreatments.setText("No");
+			}
+		}else{
+			txtMoreTreatments.setText("Yes");
+		}
+		stmtNeedCheckup.close();
 		con.close();
+	}
+	
+	private void makePayments() throws SQLException{
+		
+		ConnectDB connect = new ConnectDB();
+		Connection con = connect.getCon();
+		
+		PreparedStatement stmtMakePayments = con.prepareStatement("DELETE FROM PAYMENTS WHERE patient_id = ?");
+		stmtMakePayments.setInt(1, this.currentPatient.getID());
+		stmtMakePayments.executeUpdate();
+		stmtMakePayments.close();
+		con.close();
+		
+		JOptionPane.showMessageDialog(null,"Payments Made","The patients treatments have been set as payed.",JOptionPane.INFORMATION_MESSAGE);
+		reset();
+		
 	}
 	
 	private void updateHealthplan() throws SQLException{
@@ -599,12 +750,12 @@ public class ViewPatients {
 			}
 			
 				
-			jfHealthPlan.add(lblCurrent);
-			jfHealthPlan.add(lblSelectHealth);
-			jfHealthPlan.add(txtCurrent);
-			jfHealthPlan.add(cmbHealthPlan);
-			jfHealthPlan.add(btnUpdate);
-			jfHealthPlan.add(btnRemove);
+			jfHealthPlan.getContentPane().add(lblCurrent);
+			jfHealthPlan.getContentPane().add(lblSelectHealth);
+			jfHealthPlan.getContentPane().add(txtCurrent);
+			jfHealthPlan.getContentPane().add(cmbHealthPlan);
+			jfHealthPlan.getContentPane().add(btnUpdate);
+			jfHealthPlan.getContentPane().add(btnRemove);
 			jfHealthPlan.setVisible(true);
 			
 		}
