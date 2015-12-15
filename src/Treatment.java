@@ -1,4 +1,4 @@
-package project;
+
 
 public class Treatment {
 	private String name;

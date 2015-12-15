@@ -1,4 +1,3 @@
-package project;
 
 import java.awt.EventQueue;
 
