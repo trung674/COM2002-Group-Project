@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 public class Appointment {
 	
+
 	private Time startTime;
 	private Time endTime;
 	private int patientID;

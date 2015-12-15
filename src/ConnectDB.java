@@ -17,6 +17,7 @@ public class ConnectDB {
 			
 	}
 	
+	// getter method
 	public Connection getCon(){
 		return con;
 	}

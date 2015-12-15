@@ -6,7 +6,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+/**
+ * An interface for booking appointment
+ *
+ */
 public class BookAppointment extends JFrame {
+	
+	// Components
 	private JTextField txtPatientID, txtStartHour, txtStartMin, txtEndHour, txtEndMin;
 	private JLabel lblMessage, lblPatientID, lblStartTime, lblEndTime, lblDate;
 	private JButton btnConfirm;
@@ -14,6 +20,7 @@ public class BookAppointment extends JFrame {
 	private JSpinner jpDay, jpMonth, jpYear;
 	private JCheckBox noPatient;
 	
+	// Initiate connect to database
 	static Calendar now = Calendar.getInstance();
 	static ConnectDB db = new ConnectDB();
 	static Connection con = db.getCon();
@@ -95,15 +102,15 @@ public class BookAppointment extends JFrame {
 		lblStartTime = new JLabel("Start Time");
 		lblStartTime.setBounds(20, 250, 100, 20);
 		txtStartHour = new JTextField(2);
-		txtStartHour.setBounds(130, 250, 30, 30);
+		txtStartHour.setBounds(130, 250, 30, 20);
 		txtStartMin = new JTextField(2);
-		txtStartMin.setBounds(155, 250, 30, 30 );
+		txtStartMin.setBounds(163, 250, 30, 20 );
 		lblEndTime = new JLabel("End Time");
 		lblEndTime.setBounds(20, 280, 100, 20);
 		txtEndHour = new JTextField(2);
-		txtEndHour.setBounds(130, 280, 30, 30);
+		txtEndHour.setBounds(130, 280, 30, 20);
 		txtEndMin = new JTextField(2);
-		txtEndMin.setBounds(155, 280, 30, 30);
+		txtEndMin.setBounds(163, 280, 30, 20);
 			
 		// Date of the appointment
 		lblDate = new JLabel("Date");
@@ -125,6 +132,7 @@ public class BookAppointment extends JFrame {
 			}
 		});
 		
+		//Add components to frame
 		add(noPatient);
 		add(appointmentTypeList);
 		add(partnerTypeList);

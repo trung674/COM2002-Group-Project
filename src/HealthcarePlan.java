@@ -1,4 +1,5 @@
 public class HealthcarePlan {
+	
 	private String name;
 	private float cost;
 	private int check_ups;

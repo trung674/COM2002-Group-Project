@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.awt.*;
 
+/**
+ * Description panel - show detail of a given appointment
+ *
+ */
 public class Description extends JPanel {
 	
 	private JLabel lblPartner,lblForename,lblSurname,lblStartTime,lblEndTime,lblDate,lblType,lblTreatments,lblTotalCost;
@@ -23,8 +27,7 @@ public class Description extends JPanel {
         Border padding = new EmptyBorder(0, 0, 0, 1);
         Border blackBorder = BorderFactory.createLineBorder(Color.black);
         this.setBorder(new CompoundBorder(padding, blackBorder));
-        
-        
+               
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
         panelPartner = new JPanel();
@@ -135,7 +138,6 @@ public class Description extends JPanel {
         this.add(panelDate);
         this.add(panelStartTime);
         this.add(panelEndTime);
-
         this.add(btnCancel);
    
         // Do something

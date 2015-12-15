@@ -20,7 +20,6 @@ public class CalendarPane extends JPanel{
 	public static int MILLISECONDS_IN_HOUR = MILLISECONDS_IN_MINUITE * 60;
 	
 	private Description description;
-
 	private JTabbedPane tabbedPane;
 	private JButton btnPrevWeek,btnNextWeek,btnPrevMonth,btnNextMonth,btnPrevYear,btnNextYear;
 	private JTable dMon,dTue,dWen,dThu,dFri,hMon,hTue,hWen,hThu,hFri;

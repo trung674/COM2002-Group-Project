@@ -1,14 +1,22 @@
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.awt.*;
 
+/**
+ * Partner interface
+ */
+
 public class Partner extends JFrame {
 	
+	//Components
 	private JFrame jfTreatment;
 	private Description pDescription;
 	private JButton btnAddTreatment;
@@ -22,11 +30,13 @@ public class Partner extends JFrame {
 	private DefaultListModel<String> dlmTreatment = new DefaultListModel<String>();
 	private JList<String> listTreatment;
 	
+	// Initiate connection to database
 	static Calendar now = Calendar.getInstance();
 	static ConnectDB db = new ConnectDB();
 	static Connection con = db.getCon();
-
+ 
 	public Partner() throws SQLException {
+		// Copy the interface of Secretary
 		Secretary me = new Secretary();
 				
 		// remove Menu bar in partner interface
@@ -46,9 +56,9 @@ public class Partner extends JFrame {
 				e1.printStackTrace();
 			}
       	  }	  
-      	});
-		
+      	});	
 		pDescription.add(btnAddTreatment);
+		
 		me.revalidate();
 		me.repaint();
         me.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,6 +67,10 @@ public class Partner extends JFrame {
         
 	}
 	
+	/**
+	 * method that allow partner to add treatment(s) to a patient
+	 * @param a Appointment - appointment that needs to add treatment(s)
+	 */
 	private void addTreatment(Appointment a) throws SQLException{
 		if (a == null){
 			JOptionPane.showMessageDialog(jfTreatment, "No appintment is selected", "Error!",
@@ -175,6 +189,7 @@ public class Partner extends JFrame {
 				}
 			});
 			
+			// add components to jfTreatment
 			jfTreatment.add(btnAdd);
 			jfTreatment.add(lblPatient);
 			jfTreatment.add(lblSelectTreatment);
@@ -185,14 +200,13 @@ public class Partner extends JFrame {
 			jfTreatment.add(btnConfirm);
 			jfTreatment.setVisible(true);
 			
-		}
-		
-		
+		}		
 	}
 	
 	public static void main(String[] args) {
 		try {
 			new Partner();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

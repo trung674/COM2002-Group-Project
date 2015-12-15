@@ -4,9 +4,13 @@ import javax.swing.border.*;
 import java.sql.SQLException;
 import java.awt.*;
 
+/**
+ * Secretary interface
+ *
+ */
 public class Secretary extends JFrame{
 	
-
+	// Components
 	private JPanel mainPanel;
 	private Menubar menuBar;
 	private Description d;
@@ -22,7 +26,7 @@ public class Secretary extends JFrame{
         menuBar = new Menubar();   
         setJMenuBar(menuBar);
         
-        // Calendar Pane
+        // Calendar Pane & Description
         d = new Description(null);
         this.cp = new CalendarPane(d);
         d.setCalendar(this.cp);
@@ -33,16 +37,13 @@ public class Secretary extends JFrame{
         this.cp.setBorder(new CompoundBorder(padding, blackBorder));
         this.cp.setPreferredSize(new Dimension(900,300));
         
-        // Description
-      
-       
+            
         //Main Panel        
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(this.cp, BorderLayout.WEST);
         mainPanel.add(d, BorderLayout.CENTER);	
         
-
         add(mainPanel);
      
 	}
@@ -53,6 +54,7 @@ public class Secretary extends JFrame{
         me.setVisible(true);
 	}
 	
+	// getter and setter functions
 	public JPanel getMainPanel(){
 		return mainPanel;
 	}
@@ -68,13 +70,5 @@ public class Secretary extends JFrame{
 	public Menubar getMenubar(){
 		return menuBar;
 	}
-
-	public void setMenubar(Menubar m){
-		menuBar = m;
-	}
-
-	
-
 		
-
 }

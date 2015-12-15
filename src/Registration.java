@@ -23,6 +23,8 @@ public class Registration {
 	private String[] plan = {"Maintenance Plan", "Oral Health plan", "Dental Repair", "NHS Free Plan"};
     private JCheckBox planOption;
 	private JComboBox cmbTitle, cmbPlan;
+	
+	// Initiate connection to database
 	static Calendar now = Calendar.getInstance();
 	static ConnectDB db = new ConnectDB();
 	static Connection con = db.getCon();
